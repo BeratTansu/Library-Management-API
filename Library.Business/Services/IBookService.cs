@@ -1,4 +1,5 @@
-﻿using Library.Entities;
+﻿using Library.Business.Results;
+using Library.Entities;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -14,5 +15,7 @@ namespace Library.Business.Services
         void Add(Book book);
 
         Book? Update(int id, Book book);
+
+        DeleteBookResult Delete(int id);
     }
 }

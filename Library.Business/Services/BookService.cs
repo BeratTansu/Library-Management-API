@@ -1,4 +1,5 @@
-﻿using Library.DataAccess.Repositories;
+﻿using Library.Business.Results;
+using Library.DataAccess.Repositories;
 using Library.Entities;
 using System;
 using System.Collections.Generic;
@@ -8,12 +9,14 @@ namespace Library.Business.Services
 {
     public class BookService : IBookService
     {
-        public BookService(IBookRepository bookRepository)
+        public BookService(IBookRepository bookRepository, ILoanRepository loanRepository)
         {
             _bookRepository = bookRepository;
+            _loanRepository = loanRepository;
         }
 
         private readonly IBookRepository _bookRepository;
+        private readonly ILoanRepository _loanRepository;
 
         public void Add(Book book)
         {
@@ -45,6 +48,24 @@ namespace Library.Business.Services
 
             _bookRepository.Update(existingBook);
             return existingBook;
+        }
+
+        public DeleteBookResult Delete(int id)
+        {
+            var book = _bookRepository.GetById(id);
+
+            if (book == null)
+            {
+                return DeleteBookResult.NotFound;
+            }
+
+            if (_loanRepository.HasLoansForBook(id))
+            {
+                return DeleteBookResult.HasLoans;
+            }
+
+            _bookRepository.Delete(book);
+            return DeleteBookResult.Deleted;
         }
     }
 }

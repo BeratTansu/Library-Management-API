@@ -1,4 +1,5 @@
-﻿using Library.Business.Services;
+﻿using Library.Business.Results;
+using Library.Business.Services;
 using Library.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -53,6 +54,24 @@ namespace Library.API.Controllers
             }
 
             return Ok(updatedBook);
+        }
+
+        [HttpDelete("{id}")]
+        public IActionResult Delete(int id)
+        {
+            var result = _bookService.Delete(id);
+
+            if (result == DeleteBookResult.NotFound)
+            {
+                return NotFound();
+            }
+
+            if (result == DeleteBookResult.HasLoans)
+            {
+                return Conflict("This book has loan history and cannot be deleted");
+            }
+
+            return NoContent();
         }
 
     }

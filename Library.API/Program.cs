@@ -14,6 +14,8 @@ builder.Services.AddDbContext<LibraryDbContext>(options => options.UseNpgsql(bui
 builder.Services.AddControllers();
 
 builder.Services.AddScoped<IBookRepository, BookRepository>();
+builder.Services.AddScoped<ILoanRepository, LoanRepository>();
+
 builder.Services.AddScoped<IBookService, BookService>();
 
 var app = builder.Build();
