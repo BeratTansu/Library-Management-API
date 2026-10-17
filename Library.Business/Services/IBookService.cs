@@ -12,5 +12,7 @@ namespace Library.Business.Services
         Book? GetById(int id);
 
         void Add(Book book);
+
+        Book? Update(int id, Book book);
     }
 }

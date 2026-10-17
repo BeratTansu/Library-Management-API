@@ -29,5 +29,22 @@ namespace Library.Business.Services
         {
             return _bookRepository.GetById(id);
         }
+
+        public Book? Update(int id, Book book)
+        {
+            var existingBook = _bookRepository.GetById(id);
+
+            if (existingBook == null)
+            {
+                return null;
+            }
+
+            existingBook.Title = book.Title;
+            existingBook.Author = book.Author;
+            existingBook.PublicationDate = book.PublicationDate;
+
+            _bookRepository.Update(existingBook);
+            return existingBook;
+        }
     }
 }

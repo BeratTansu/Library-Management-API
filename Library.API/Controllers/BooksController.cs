@@ -42,5 +42,18 @@ namespace Library.API.Controllers
             return CreatedAtAction(nameof(GetById), new { id = book.Id }, book);
         }
 
+        [HttpPut("{id}")]
+        public IActionResult Update(int id, Book book)
+        {
+            var updatedBook = _bookService.Update(id, book);
+
+            if (updatedBook == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(updatedBook);
+        }
+
     }
 }
