@@ -18,5 +18,10 @@ namespace Library.DataAccess.Repositories
         {
             return _context.Loans.Any(l => l.BookId == bookId);
         }
+
+        public bool HasActiveLoan(int bookId)
+        {
+            return _context.Loans.Any(l => l.BookId == bookId && l.ReturnDate == null);
+        }
     }
 }

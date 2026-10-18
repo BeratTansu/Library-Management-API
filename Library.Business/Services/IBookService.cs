@@ -1,4 +1,5 @@
-﻿using Library.Business.Results;
+﻿using Library.Business.Dtos;
+using Library.Business.Results;
 using Library.Entities;
 using System;
 using System.Collections.Generic;
@@ -10,7 +11,7 @@ namespace Library.Business.Services
     {
         List<Book> GetAll();
 
-        Book? GetById(int id);
+        BookDto? GetById(int id);
 
         void Add(Book book);
 

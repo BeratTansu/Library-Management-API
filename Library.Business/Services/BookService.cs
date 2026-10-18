@@ -1,4 +1,5 @@
-﻿using Library.Business.Results;
+﻿using Library.Business.Dtos;
+using Library.Business.Results;
 using Library.DataAccess.Repositories;
 using Library.Entities;
 using System;
@@ -28,9 +29,21 @@ namespace Library.Business.Services
             return _bookRepository.GetAll();
         }
 
-        public Book? GetById(int id)
+        public BookDto? GetById(int id)
         {
-            return _bookRepository.GetById(id);
+            var book = _bookRepository.GetById(id);
+
+            if (book == null)
+                return null;
+
+            return new BookDto
+            {
+                Id = book.Id,
+                Title = book.Title,
+                Author = book.Author,
+                PublicationDate = book.PublicationDate,
+                Status = _loanRepository.HasActiveLoan(book.Id) ? "OnLoan" : "Available"
+            };
         }
 
         public Book? Update(int id, Book book)

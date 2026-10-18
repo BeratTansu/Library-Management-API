@@ -7,5 +7,7 @@ namespace Library.DataAccess.Repositories
     public interface ILoanRepository
     {
         bool HasLoansForBook(int bookId);
+
+        bool HasActiveLoan(int bookId);
     }
 }
