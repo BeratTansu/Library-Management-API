@@ -1,6 +1,6 @@
-﻿using Library.Business.Results;
+﻿using Library.Business.Dtos;
+using Library.Business.Results;
 using Library.Business.Services;
-using Library.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -37,23 +37,23 @@ namespace Library.API.Controllers
         }
 
         [HttpPost]
-        public IActionResult Add(Book book)
+        public IActionResult Add(CreateBookDto createBookDto)
         {
-            _bookService.Add(book);
-            return CreatedAtAction(nameof(GetById), new { id = book.Id }, book);
+            var bookDto = _bookService.Add(createBookDto);
+            return CreatedAtAction(nameof(GetById), new { id = bookDto.Id }, bookDto);
         }
 
         [HttpPut("{id}")]
-        public IActionResult Update(int id, Book book)
+        public IActionResult Update(int id, UpdateBookDto updateBookDto)
         {
-            var updatedBook = _bookService.Update(id, book);
+            var updatedBookDto = _bookService.Update(id, updateBookDto);
 
-            if (updatedBook == null)
+            if (updatedBookDto == null)
             {
                 return NotFound();
             }
 
-            return Ok(updatedBook);
+            return Ok(updatedBookDto);
         }
 
         [HttpDelete("{id}")]

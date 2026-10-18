@@ -13,9 +13,9 @@ namespace Library.Business.Services
 
         BookDto? GetById(int id);
 
-        void Add(Book book);
+        BookDto Add(CreateBookDto createBookDto);
 
-        Book? Update(int id, Book book);
+        BookDto? Update(int id, UpdateBookDto updateBookDto);
 
         DeleteBookResult Delete(int id);
     }

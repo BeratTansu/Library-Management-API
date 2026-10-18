@@ -19,9 +19,25 @@ namespace Library.Business.Services
         private readonly IBookRepository _bookRepository;
         private readonly ILoanRepository _loanRepository;
 
-        public void Add(Book book)
+        public BookDto Add(CreateBookDto createBookDto)
         {
+            var book = new Book
+            {
+                Title = createBookDto.Title,
+                Author = createBookDto.Author,
+                PublicationDate = createBookDto.PublicationDate,
+            };
+
             _bookRepository.Add(book);
+
+            return new BookDto
+            {
+                Id = book.Id,
+                Title = book.Title,
+                Author = book.Author,
+                PublicationDate = book.PublicationDate,
+                Status = "Available"
+            };
         }
 
         public List<BookDto> GetAll()
@@ -61,7 +77,7 @@ namespace Library.Business.Services
             };
         }
 
-        public Book? Update(int id, Book book)
+        public BookDto? Update(int id, UpdateBookDto updateBookDto)
         {
             var existingBook = _bookRepository.GetById(id);
 
@@ -70,12 +86,19 @@ namespace Library.Business.Services
                 return null;
             }
 
-            existingBook.Title = book.Title;
-            existingBook.Author = book.Author;
-            existingBook.PublicationDate = book.PublicationDate;
+            existingBook.Title = updateBookDto.Title;
+            existingBook.Author = updateBookDto.Author;
+            existingBook.PublicationDate = updateBookDto.PublicationDate;
 
             _bookRepository.Update(existingBook);
-            return existingBook;
+            return new BookDto
+            {
+                Id = existingBook.Id,
+                Title = existingBook.Title,
+                Author = existingBook.Author,
+                PublicationDate = existingBook.PublicationDate,
+                Status = _loanRepository.HasActiveLoan(existingBook.Id) ? "OnLoan" : "Available"
+            };
         }
 
         public DeleteBookResult Delete(int id)
