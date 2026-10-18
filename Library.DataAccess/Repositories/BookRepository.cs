@@ -29,7 +29,7 @@ namespace Library.DataAccess.Repositories
 
         public List<Book> GetAll()
         {
-            return _context.Books.ToList();
+            return _context.Books.OrderBy(b => b.Id).ToList();
         }
 
         public Book? GetById(int id)

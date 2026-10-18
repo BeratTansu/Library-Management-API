@@ -1,4 +1,5 @@
-﻿using Library.Business.Dtos;
+﻿using AutoMapper;
+using Library.Business.Dtos;
 using Library.Business.Results;
 using Library.DataAccess.Repositories;
 using Library.Entities;
@@ -10,34 +11,31 @@ namespace Library.Business.Services
 {
     public class BookService : IBookService
     {
-        public BookService(IBookRepository bookRepository, ILoanRepository loanRepository)
+        public BookService(IBookRepository bookRepository, ILoanRepository loanRepository, IMapper mapper)
         {
             _bookRepository = bookRepository;
             _loanRepository = loanRepository;
+            _mapper = mapper;
         }
 
         private readonly IBookRepository _bookRepository;
         private readonly ILoanRepository _loanRepository;
+        private readonly IMapper _mapper;
+
+        private BookDto MapToBookDto(Book book)
+        {
+            var bookDto = _mapper.Map<BookDto>(book);
+            bookDto.Status = _loanRepository.HasActiveLoan(book.Id) ? "OnLoan" : "Available";
+            return bookDto;
+        }
 
         public BookDto Add(CreateBookDto createBookDto)
         {
-            var book = new Book
-            {
-                Title = createBookDto.Title,
-                Author = createBookDto.Author,
-                PublicationDate = createBookDto.PublicationDate,
-            };
+            var book = _mapper.Map<Book>(createBookDto);
 
             _bookRepository.Add(book);
 
-            return new BookDto
-            {
-                Id = book.Id,
-                Title = book.Title,
-                Author = book.Author,
-                PublicationDate = book.PublicationDate,
-                Status = "Available"
-            };
+            return MapToBookDto(book);
         }
 
         public List<BookDto> GetAll()
@@ -47,14 +45,7 @@ namespace Library.Business.Services
 
             foreach (var book in books)
             {
-                bookDtos.Add(new BookDto
-                {
-                    Id = book.Id,
-                    Title = book.Title,
-                    Author = book.Author,
-                    PublicationDate = book.PublicationDate,
-                    Status = _loanRepository.HasActiveLoan(book.Id) ? "OnLoan" : "Available"
-                });
+                bookDtos.Add(MapToBookDto(book));
             }
 
             return bookDtos;
@@ -67,14 +58,7 @@ namespace Library.Business.Services
             if (book == null)
                 return null;
 
-            return new BookDto
-            {
-                Id = book.Id,
-                Title = book.Title,
-                Author = book.Author,
-                PublicationDate = book.PublicationDate,
-                Status = _loanRepository.HasActiveLoan(book.Id) ? "OnLoan" : "Available"
-            };
+            return MapToBookDto(book);
         }
 
         public BookDto? Update(int id, UpdateBookDto updateBookDto)
@@ -86,19 +70,10 @@ namespace Library.Business.Services
                 return null;
             }
 
-            existingBook.Title = updateBookDto.Title;
-            existingBook.Author = updateBookDto.Author;
-            existingBook.PublicationDate = updateBookDto.PublicationDate;
+            _mapper.Map(updateBookDto, existingBook);
 
             _bookRepository.Update(existingBook);
-            return new BookDto
-            {
-                Id = existingBook.Id,
-                Title = existingBook.Title,
-                Author = existingBook.Author,
-                PublicationDate = existingBook.PublicationDate,
-                Status = _loanRepository.HasActiveLoan(existingBook.Id) ? "OnLoan" : "Available"
-            };
+            return MapToBookDto(existingBook);
         }
 
         public DeleteBookResult Delete(int id)

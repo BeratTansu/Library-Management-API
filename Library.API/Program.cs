@@ -1,3 +1,4 @@
+using Library.Business.Mapping;
 using Library.Business.Services;
 using Library.DataAccess.Context;
 using Library.DataAccess.Repositories;
@@ -17,6 +18,8 @@ builder.Services.AddScoped<IBookRepository, BookRepository>();
 builder.Services.AddScoped<ILoanRepository, LoanRepository>();
 
 builder.Services.AddScoped<IBookService, BookService>();
+
+builder.Services.AddAutoMapper(cfg => { }, typeof(BookProfile));
 
 var app = builder.Build();
 
