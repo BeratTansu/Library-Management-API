@@ -9,7 +9,7 @@ namespace Library.Business.Services
 {
     public interface IBookService
     {
-        List<Book> GetAll();
+        List<BookDto> GetAll();
 
         BookDto? GetById(int id);
 

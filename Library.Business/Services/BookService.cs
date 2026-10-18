@@ -24,9 +24,24 @@ namespace Library.Business.Services
             _bookRepository.Add(book);
         }
 
-        public List<Book> GetAll()
+        public List<BookDto> GetAll()
         {
-            return _bookRepository.GetAll();
+            var books = _bookRepository.GetAll();
+            var bookDtos = new List<BookDto>();
+
+            foreach (var book in books)
+            {
+                bookDtos.Add(new BookDto
+                {
+                    Id = book.Id,
+                    Title = book.Title,
+                    Author = book.Author,
+                    PublicationDate = book.PublicationDate,
+                    Status = _loanRepository.HasActiveLoan(book.Id) ? "OnLoan" : "Available"
+                });
+            }
+
+            return bookDtos;
         }
 
         public BookDto? GetById(int id)
