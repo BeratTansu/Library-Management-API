@@ -1,5 +1,7 @@
+using FluentValidation;
 using Library.Business.Mapping;
 using Library.Business.Services;
+using Library.Business.Validators;
 using Library.DataAccess.Context;
 using Library.DataAccess.Repositories;
 using Microsoft.EntityFrameworkCore;
@@ -20,6 +22,8 @@ builder.Services.AddScoped<ILoanRepository, LoanRepository>();
 builder.Services.AddScoped<IBookService, BookService>();
 
 builder.Services.AddAutoMapper(cfg => { }, typeof(BookProfile));
+
+builder.Services.AddValidatorsFromAssemblyContaining<CreateBookDtoValidator>();
 
 var app = builder.Build();
 

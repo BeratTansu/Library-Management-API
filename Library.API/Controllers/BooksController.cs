@@ -1,4 +1,5 @@
-﻿using Library.Business.Dtos;
+﻿using FluentValidation;
+using Library.Business.Dtos;
 using Library.Business.Results;
 using Library.Business.Services;
 using Microsoft.AspNetCore.Http;
@@ -10,11 +11,15 @@ namespace Library.API.Controllers
     [ApiController]
     public class BooksController : ControllerBase
     {
-        public BooksController(IBookService bookService)
+        public BooksController(IBookService bookService, IValidator<CreateBookDto> createBookValidator, IValidator<UpdateBookDto> updateBookValidator)
         {
             _bookService = bookService;
+            _createBookValidator = createBookValidator;
+            _updateBookValidator = updateBookValidator;
         }
         private readonly IBookService _bookService;
+        private readonly IValidator<CreateBookDto> _createBookValidator;
+        private readonly IValidator<UpdateBookDto> _updateBookValidator; 
 
         [HttpGet]
         public IActionResult GetAll()
@@ -39,6 +44,13 @@ namespace Library.API.Controllers
         [HttpPost]
         public IActionResult Add(CreateBookDto createBookDto)
         {
+            var validationResult = _createBookValidator.Validate(createBookDto);
+
+            if (!validationResult.IsValid)
+            {
+                return ValidationProblem(new ValidationProblemDetails(validationResult.ToDictionary()));   
+            }
+
             var bookDto = _bookService.Add(createBookDto);
             return CreatedAtAction(nameof(GetById), new { id = bookDto.Id }, bookDto);
         }
@@ -46,6 +58,13 @@ namespace Library.API.Controllers
         [HttpPut("{id}")]
         public IActionResult Update(int id, UpdateBookDto updateBookDto)
         {
+            var validationResult = _updateBookValidator.Validate(updateBookDto);
+
+            if (!validationResult.IsValid)
+            {
+                return ValidationProblem(new ValidationProblemDetails(validationResult.ToDictionary()));
+            }
+
             var updatedBookDto = _bookService.Update(id, updateBookDto);
 
             if (updatedBookDto == null)
