@@ -30,6 +30,10 @@ namespace Library.DataAccess.Context
                 .WithMany(u => u.Loans)
                 .HasForeignKey(l => l.UserId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<User>()
+                .HasIndex(u => u.Email)
+                .IsUnique();
         }
     }
 }
