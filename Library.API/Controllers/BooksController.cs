@@ -2,6 +2,7 @@
 using Library.Business.Dtos;
 using Library.Business.Results;
 using Library.Business.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,6 +10,9 @@ namespace Library.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+
+    [Authorize(Roles = "Admin")]
+
     public class BooksController : ControllerBase
     {
         public BooksController(IBookService bookService, IValidator<CreateBookDto> createBookValidator, IValidator<UpdateBookDto> updateBookValidator)
@@ -19,8 +23,9 @@ namespace Library.API.Controllers
         }
         private readonly IBookService _bookService;
         private readonly IValidator<CreateBookDto> _createBookValidator;
-        private readonly IValidator<UpdateBookDto> _updateBookValidator; 
+        private readonly IValidator<UpdateBookDto> _updateBookValidator;
 
+        [AllowAnonymous]
         [HttpGet]
         public IActionResult GetAll()
         {
@@ -28,6 +33,7 @@ namespace Library.API.Controllers
             return Ok(books);
         }
 
+        [AllowAnonymous]
         [HttpGet("{id}")]
         public IActionResult GetById(int id)
         {
