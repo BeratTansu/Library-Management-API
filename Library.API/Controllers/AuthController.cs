@@ -10,14 +10,16 @@ namespace Library.API.Controllers
     [ApiController]
     public class AuthController : ControllerBase
     {
-        public AuthController(IAuthService authService, IValidator<RegisterDto> registerValidator)
+        public AuthController(IAuthService authService, IValidator<RegisterDto> registerValidator, IValidator<LoginDto> loginValidator)
         {
             _authService = authService;
             _registerValidator = registerValidator;
+            _loginValidator = loginValidator;
         }
 
         private readonly IAuthService _authService;
         private readonly IValidator<RegisterDto> _registerValidator;
+        private readonly IValidator<LoginDto> _loginValidator;
 
         [HttpPost("register")]
         public IActionResult Register(RegisterDto registerDto)
@@ -37,6 +39,26 @@ namespace Library.API.Controllers
             }
 
             return StatusCode(StatusCodes.Status201Created, userDto);
+        }
+
+        [HttpPost("login")]
+        public IActionResult Login(LoginDto loginDto)
+        {
+            var validationResult = _loginValidator.Validate(loginDto);
+
+            if (!validationResult.IsValid)
+            {
+                return ValidationProblem(new ValidationProblemDetails(validationResult.ToDictionary()));
+            }
+
+            var loginResponseDto = _authService.Login(loginDto);
+
+            if (loginResponseDto == null)
+            {
+                return Unauthorized("Invalid email or password");
+            }
+
+            return Ok(loginResponseDto);
         }
     }
 }

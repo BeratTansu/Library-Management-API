@@ -8,5 +8,7 @@ namespace Library.Business.Services
     public interface IAuthService
     {
         UserDto? Register(RegisterDto registerDto);
+
+        LoginResponseDto? Login(LoginDto loginDto);
     }
 }

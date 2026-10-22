@@ -1,6 +1,7 @@
 using FluentValidation;
 using Library.Business.Mapping;
 using Library.Business.Services;
+using Library.Business.Settings;
 using Library.Business.Validators;
 using Library.DataAccess.Context;
 using Library.DataAccess.Repositories;
@@ -22,10 +23,13 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 
 builder.Services.AddScoped<IBookService, BookService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<ITokenService, TokenService>();
 
 builder.Services.AddAutoMapper(cfg => { }, typeof(BookProfile));
 
 builder.Services.AddValidatorsFromAssemblyContaining<CreateBookDtoValidator>();
+
+builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("Jwt"));
 
 var app = builder.Build();
 
