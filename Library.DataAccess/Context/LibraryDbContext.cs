@@ -34,6 +34,14 @@ namespace Library.DataAccess.Context
             modelBuilder.Entity<User>()
                 .HasIndex(u => u.Email)
                 .IsUnique();
+
+            modelBuilder.Entity<Loan>()
+                .HasIndex(l => l.BookId, "IX_Loans_BookId");
+
+            modelBuilder.Entity<Loan>()
+                .HasIndex(l => l.BookId, "IX_Loans_BookId_Active")
+                .IsUnique()
+                .HasFilter("\"ReturnDate\" IS NULL");
         }
     }
 }

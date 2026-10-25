@@ -68,9 +68,13 @@ namespace Library.DataAccess.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("BookId");
-
                     b.HasIndex("UserId");
+
+                    b.HasIndex(new[] { "BookId" }, "IX_Loans_BookId");
+
+                    b.HasIndex(new[] { "BookId" }, "IX_Loans_BookId_Active")
+                        .IsUnique()
+                        .HasFilter("\"ReturnDate\" IS NULL");
 
                     b.ToTable("Loans");
                 });
