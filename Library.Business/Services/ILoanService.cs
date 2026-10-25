@@ -8,5 +8,6 @@ namespace Library.Business.Services
     public interface ILoanService
     {
         BorrowBookResult Borrow(int bookId, int userId);
+        ReturnBookResult Return(int loanId, int userId);
     }
 }

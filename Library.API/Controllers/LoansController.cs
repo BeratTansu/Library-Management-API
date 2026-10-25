@@ -49,5 +49,30 @@ namespace Library.API.Controllers
 
             return StatusCode(StatusCodes.Status201Created, result.Loan);
         }
+
+        [HttpPost("{id}/return")]
+        public IActionResult Return(int id)
+        {
+            var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+
+            var result = _loanService.Return(id, userId);
+
+            if (result.Status == ReturnBookStatus.LoanNotFound)
+            {
+                return NotFound();
+            }
+
+            if (result.Status == ReturnBookStatus.NotOwner)
+            {
+                return Forbid();
+            }
+
+            if (result.Status == ReturnBookStatus.AlreadyReturned)
+            {
+                return Conflict("This loan has already been returned");
+            }
+
+            return Ok(result.Loan);
+        }
     }
 }

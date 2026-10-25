@@ -49,5 +49,33 @@ namespace Library.Business.Services
                 Loan = _mapper.Map<LoanDto>(loan)
             };
         }
+
+        public ReturnBookResult Return(int loanId, int userId)
+        {
+            var loan = _loanRepository.GetById(loanId);
+            if (loan == null)
+            {
+                return new ReturnBookResult { Status = ReturnBookStatus.LoanNotFound };
+            }
+
+            if (loan.UserId != userId)
+            {
+                return new ReturnBookResult { Status = ReturnBookStatus.NotOwner};
+            }
+
+            if (loan.ReturnDate != null)
+            {
+                return new ReturnBookResult { Status = ReturnBookStatus.AlreadyReturned };
+            }
+
+            loan.ReturnDate = DateTime.UtcNow;
+            _loanRepository.Update(loan);
+
+            return new ReturnBookResult
+            {
+                Status = ReturnBookStatus.Success,
+                Loan = _mapper.Map<LoanDto>(loan)
+            };
+        }
     }
 }

@@ -11,5 +11,7 @@ namespace Library.DataAccess.Repositories
 
         bool HasActiveLoan(int bookId);
         void Add(Loan loan);
+        Loan? GetById(int id);
+        void Update(Loan loan);
     }
 }

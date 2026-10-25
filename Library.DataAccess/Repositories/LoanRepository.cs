@@ -30,5 +30,16 @@ namespace Library.DataAccess.Repositories
             _context.Loans.Add(loan);
             _context.SaveChanges();
         }
+
+        public Loan? GetById(int id)
+        {
+            return _context.Loans.FirstOrDefault(l => l.Id == id);
+        }
+
+        public void Update(Loan loan)
+        {
+            _context.Loans.Update(loan);
+            _context.SaveChanges();
+        }
     }
 }
